@@ -22,7 +22,8 @@
 #define MY_DEST_MAC5	0xFF
 // Allocating size to different containers
 #define HEADER_SIZE	14
+
 /* Function Prototypes */
-int ctrlSend(char *, uint8_t *, int);
-int dataSend(char *, uint8_t *, int);
+int ctrlSend(uint8_t *inPayload, int payloadLen, struct ether_addr *dest);
+int dataSend(uint8_t *inPayload, int payloadLen);
 #endif

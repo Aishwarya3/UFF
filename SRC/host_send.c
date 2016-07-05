@@ -17,11 +17,11 @@ int main (int argc, char** argv) {
 	int size=atoi(argv[2]);
 
 	uint8_t *payload = NULL;
-	uint8_t payloadLen;
+	//uint8_t payloadLen;
 	payload = (uint8_t*) calloc (1, size);
 	memcpy(payload, argv[1], size);
 		
-	ctrlSend(payload,size,ether_aton(argv[3]));
+	ctrlSend(payload, size, ether_aton(argv[3]));
 
 
 return 0;
@@ -117,7 +117,7 @@ return 0;
 
 int dataSend(uint8_t *inPayload, int payloadLen) {
 
-char *etherPort, 
+char *etherPort;
 strcpy(etherPort, "eth1");
 
 int sockfd;
