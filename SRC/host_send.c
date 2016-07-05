@@ -11,14 +11,14 @@ int main (int argc, char** argv) {
 
 
 	if(argc<1){
-		printf("Error: Format required: send:1 rcv:0");
+		printf("\nError: Format required: send:1 rcv:0");
 		exit(1);
 	}
 
 	if(atoi(argv[1])==1)
 	{
 		if (argc < 4) {
-			printf("Error: Format required: msg msg_size dest_addr\n");
+			printf("\nError: Format required: send/rcv msg msg_size dest_addr\n");
 			exit(1);
 		}
 
@@ -37,7 +37,7 @@ int main (int argc, char** argv) {
 	}
 	else
 	{ 
-		printf("Error: Format required: send:1 rcv:0");
+		printf("\nError: Format required: send:1 rcv:0");
 		exit(1); 
 	}
 
@@ -126,6 +126,10 @@ socket_address.sll_addr[5] = MY_DEST_MAC5;
 if (sendto(sockfd, frame, frame_Size, 0, (struct sockaddr*) &socket_address, sizeof(struct sockaddr_ll)) < 0) {
 printf("ERROR: Send failed\n");
 }
+else
+{
+printf("Send successful.");
+}
 free(eh);
 close(sockfd);
 return 0;
@@ -185,6 +189,7 @@ void host_rcv()
 	while (1) {
 		int flag=0; //nnn++;
 		n=recvfrom(sock, buffer, 2048, 0, NULL,NULL);
+		//n = recvfrom(sock, buffer, 2048, MSG_DONTWAIT, (struct sockaddr*) &src_addr, &addr_len);
 		//n=recvfrom(sock, buffer, 2048, MSG_DONTWAIT, NULL,NULL);
 		if (n == -1) {
 			perror("ERROR: Recvfrom");
