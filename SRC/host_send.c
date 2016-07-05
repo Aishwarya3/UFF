@@ -1,15 +1,44 @@
 /*
-* mtp_send.c
+* host_send.c
 *
 */
-#include "mtp_send.h"
-int ctrlSend(char *etherPort, uint8_t *inPayload, int payloadLen) {
+#include "host_send.h"
+
+
+
+
+int main (int argc, char** argv) {	
+
+	if (argc < 3) {
+		printf("Error: Format required: msg msg_size dest_addr\n");
+		exit(1);
+	}
+
+	int size=atoi(argv[2]);
+
+	uint8_t *payload = NULL;
+	uint8_t payloadLen;
+	payload = (uint8_t*) calloc (1, size);
+	memcpy(payload, argv[1], size);
+		
+	ctrlSend(payload,size,ether_aton(argv[3]));
+
+
+return 0;
+}
+
+
+
+
+
+
+int ctrlSend(uint8_t *inPayload, int payloadLen, struct ether_addr *dest) {
 int frame_Size = -1;
 int sockfd;
 struct ifreq if_idx;
 struct ifreq if_mac;
 char ifName[IFNAMSIZ];
-strcpy(ifName, etherPort);
+strcpy(ifName, "eth1");
 frame_Size = HEADER_SIZE + payloadLen;
 // creating frame
 uint8_t frame[frame_Size];
@@ -41,13 +70,20 @@ eh->ether_shost[2] = ((uint8_t *) &if_mac.ifr_hwaddr.sa_data)[2];
 eh->ether_shost[3] = ((uint8_t *) &if_mac.ifr_hwaddr.sa_data)[3];
 eh->ether_shost[4] = ((uint8_t *) &if_mac.ifr_hwaddr.sa_data)[4];
 eh->ether_shost[5] = ((uint8_t *) &if_mac.ifr_hwaddr.sa_data)[5];
-eh->ether_dhost[0] = MY_DEST_MAC0;
+
+memcpy(&eh->ether_dhost, dest, sizeof(struct ether_addr));
+
+eh->ether_type = htons(0x806);
+
+/*eh->ether_dhost[0] = MY_DEST_MAC0;
 eh->ether_dhost[1] = MY_DEST_MAC1;
 eh->ether_dhost[2] = MY_DEST_MAC2;
 eh->ether_dhost[3] = MY_DEST_MAC3;
 eh->ether_dhost[4] = MY_DEST_MAC4;
 eh->ether_dhost[5] = MY_DEST_MAC5;
 eh->ether_type = htons(0x8850);
+*/
+
 // Copying header to frame
 memcpy(frame, eh, sizeof(struct ether_header));
 // Copying Payload (No. of tier addr + x times (tier addr length + tier addr) )
@@ -58,12 +94,17 @@ socket_address.sll_ifindex = if_idx.ifr_ifindex;
 // Address length - 6 bytes
 socket_address.sll_halen = ETH_ALEN;
 // Destination MAC Address
+
+memcpy(&socket_address.sll_addr, dest, sizeof(struct ether_addr));
+
+/*
 socket_address.sll_addr[0] = MY_DEST_MAC0;
 socket_address.sll_addr[1] = MY_DEST_MAC1;
 socket_address.sll_addr[2] = MY_DEST_MAC2;
 socket_address.sll_addr[3] = MY_DEST_MAC3;
 socket_address.sll_addr[4] = MY_DEST_MAC4;
 socket_address.sll_addr[5] = MY_DEST_MAC5;
+*/
 // Send packet
 if (sendto(sockfd, frame, frame_Size, 0, (struct sockaddr*) &socket_address, sizeof(struct sockaddr_ll)) < 0) {
 printf("ERROR: Send failed\n");
@@ -72,7 +113,13 @@ free(eh);
 close(sockfd);
 return 0;
 }
-int dataSend(char *etherPort, uint8_t *inPayload, int payloadLen) {
+
+
+int dataSend(uint8_t *inPayload, int payloadLen) {
+
+char *etherPort, 
+strcpy(etherPort, "eth1");
+
 int sockfd;
 struct ifreq if_idx;
 struct sockaddr_ll socket_address;
