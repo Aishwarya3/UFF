@@ -172,7 +172,7 @@ void host_rcv()
 	printf("aaaaaaaaaaaaaaaaaaaaaa");
 
 	//if ((sock = socket(AF_PACKET, SOCK_RAW, htons(0x8850))) < 0) { //AF_INET/AF_PACKET, SOCK_RAW ,IPPROTO_RAW/htons(ETH_P_ALL)
-        if ((sock = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW)) < 0) {	
+    if ((sock = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW)) < 0) {	
 	perror("ERROR: Socket");
 		exit(1);
 	}
@@ -184,8 +184,8 @@ void host_rcv()
 //int nnn=1;
 	while (1) {
 		int flag=0; //nnn++;
-		//n=recvfrom(sock, buffer, 2048, 0, NULL,NULL);
-		n=recvfrom(sock, buffer, 2048, MSG_DONTWAIT, NULL,NULL);
+		n=recvfrom(sock, buffer, 2048, 0, NULL,NULL);
+		//n=recvfrom(sock, buffer, 2048, MSG_DONTWAIT, NULL,NULL);
 		if (n == -1) {
 			perror("ERROR: Recvfrom");
 			//close(sock);
@@ -218,8 +218,5 @@ void host_rcv()
 		}
 	}
 
-
-
 close(sock);
-return 0;
 }
