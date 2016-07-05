@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 #include <net/if.h>
 #include <netinet/ether.h>
+#include <netdb.h>
 // Destination MAC address (Presently broadcast address)
 #define MY_DEST_MAC0	0xFF
 #define MY_DEST_MAC1	0xFF
@@ -26,4 +27,5 @@
 /* Function Prototypes */
 int ctrlSend(uint8_t *inPayload, int payloadLen, struct ether_addr *dest);
 int dataSend(uint8_t *inPayload, int payloadLen);
+void host_rcv();
 #endif

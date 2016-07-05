@@ -9,20 +9,37 @@
 
 int main (int argc, char** argv) {	
 
-	if (argc < 3) {
-		printf("Error: Format required: msg msg_size dest_addr\n");
+
+	if(argc<1){
+		printf("Error: Format required: send:1 rcv:0");
 		exit(1);
 	}
 
-	int size=atoi(argv[2]);
+	if(atoi(argv[1])==1)
+	{
+		if (argc < 4) {
+			printf("Error: Format required: msg msg_size dest_addr\n");
+			exit(1);
+		}
 
-	uint8_t *payload = NULL;
-	//uint8_t payloadLen;
-	payload = (uint8_t*) calloc (1, size);
-	memcpy(payload, argv[1], size);
-		
-	ctrlSend(payload, size, ether_aton(argv[3]));
+		int size=atoi(argv[3]);
 
+		uint8_t *payload = NULL;
+		//uint8_t payloadLen;
+		payload = (uint8_t*) calloc (1, size);
+		memcpy(payload, argv[2], size);
+			
+		ctrlSend(payload, size, ether_aton(argv[4]));
+	}
+	else if(atoi(argv[1])==0)
+	{
+		host_rcv();
+	}
+	else
+	{ 
+		printf("Error: Format required: send:1 rcv:0");
+		exit(1); 
+	}
 
 return 0;
 }
@@ -141,5 +158,68 @@ if (sendto(sockfd, inPayload, payloadLen, 0, (struct sockaddr*) &socket_address,
 printf("ERROR: Send failed\n");
 }
 close(sockfd);
+return 0;
+}
+
+
+void host_rcv()
+{
+	int sock, n, cnt;
+	char buffer[2048];
+	unsigned char *iphead, *ethhead;
+	struct ether_addr ether;
+	
+	printf("aaaaaaaaaaaaaaaaaaaaaa");
+
+	//if ((sock = socket(AF_PACKET, SOCK_RAW, htons(0x8850))) < 0) { //AF_INET/AF_PACKET, SOCK_RAW ,IPPROTO_RAW/htons(ETH_P_ALL)
+        if ((sock = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW)) < 0) {	
+	perror("ERROR: Socket");
+		exit(1);
+	}
+
+	//char *opt;
+	//opt = "eth0";
+	//setsockopt(sd, SOL_SOCKET, SO_BINDTODEVICE, opt, 4);
+
+//int nnn=1;
+	while (1) {
+		int flag=0; //nnn++;
+		//n=recvfrom(sock, buffer, 2048, 0, NULL,NULL);
+		n=recvfrom(sock, buffer, 2048, MSG_DONTWAIT, NULL,NULL);
+		if (n == -1) {
+			perror("ERROR: Recvfrom");
+			//close(sock);
+			flag=1;
+
+			//exit(1);
+		}
+		//printf("n value %d\n",n);
+	//	if (n > 0) {
+		if (flag==0) {
+
+			ethhead = (unsigned char *) buffer;
+			//printf("1\n");
+			if (ethhead != NULL) {
+				//printf("2\n");
+				iphead = (unsigned char *) (buffer + 14); // Skip Ethernet header
+				printf("\n--------------------------------------"
+						"\nMAC Destination : "
+						"%02x:%02x:%02x:%02x:%02x:%02x\n", ethhead[0], ethhead[1], ethhead[2],
+						ethhead[3], ethhead[4], ethhead[5]);
+				//printf("3\n");
+				printf("MAC Origin : "
+						"%02x:%02x:%02x:%02x:%02x:%02x\n", ethhead[6], ethhead[7], ethhead[8],
+						ethhead[9], ethhead[10], ethhead[11]);
+				printf("Type : %02x:%02x \n", ethhead[12], ethhead[13]);
+				printf("Data : %s\n", &ethhead[14]);
+
+			}
+			break;
+		}
+	}
+
+
+
+close(sock);
 return 0;
 }
