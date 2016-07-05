@@ -173,7 +173,7 @@ void host_rcv()
 	unsigned char *iphead, *ethhead;
 	struct ether_addr ether;
 	
-	printf("aaaaaaaaaaaaaaaaaaaaaa");
+	//printf("aaaaaaaaaaaaaaaaaaaaaa");
 
 	//if ((sock = socket(AF_PACKET, SOCK_RAW, htons(0x8850))) < 0) { //AF_INET/AF_PACKET, SOCK_RAW ,IPPROTO_RAW/htons(ETH_P_ALL)
     if ((sock = socket(AF_PACKET, SOCK_RAW, htons (ETH_P_ARP))) < 0) {	
