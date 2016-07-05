@@ -176,7 +176,7 @@ void host_rcv()
 	printf("aaaaaaaaaaaaaaaaaaaaaa");
 
 	//if ((sock = socket(AF_PACKET, SOCK_RAW, htons(0x8850))) < 0) { //AF_INET/AF_PACKET, SOCK_RAW ,IPPROTO_RAW/htons(ETH_P_ALL)
-    if ((sock = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW)) < 0) {	
+    if ((sock = socket(AF_PACKET, SOCK_RAW, htons (ETH_P_ARP))) < 0) {	
 	perror("ERROR: Socket");
 		exit(1);
 	}
